@@ -212,7 +212,7 @@ app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`✅ 服务器已启动: http://localhost:${PORT}`);
     console.log(`📊 C端计算接口: http://localhost:${PORT}/api/calculate/c?price=29.99&monthlySales=500&category=beauty`);
     console.log(`🏭 B端计算接口: http://localhost:${PORT}/api/calculate/b?productType=parking_gate&priceRange=10k-30k&hasVideo=true`);
