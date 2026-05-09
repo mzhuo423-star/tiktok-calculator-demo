@@ -1,0 +1,13 @@
+{
+  "name": "tiktok-calculator-backend",
+  "version": "1.0.0",
+  "description": "TikTok收益测算器后端",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  }
+}

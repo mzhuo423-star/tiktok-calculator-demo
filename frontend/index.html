@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>TikTok收益测算器 - 品牌卖家/工厂项目方</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- 模式选择界面 -->
+        <div id="modeSelector" class="mode-selector active">
+            <div class="container">
+                <div class="header">
+                    <h1>🎯 TikTok收益测算器</h1>
+                    <p>30秒快速估算你的TikTok变现潜力</p>
+                </div>
+
+                <div class="mode-cards">
+                    <div class="mode-card" data-mode="c">
+                        <div class="mode-icon">🛍️</div>
+                        <div class="mode-title">我是品牌/卖家</div>
+                        <div class="mode-desc">直接卖货赚利润<br>（美妆、服饰、家居、3C等）</div>
+                    </div>
+
+                    <div class="mode-card" data-mode="b">
+                        <div class="mode-icon">🏭</div>
+                        <div class="mode-title">我是工厂/项目方</div>
+                        <div class="mode-desc">接B端项目询盘<br>（停车场设备、充电桩、工程类）</div>
+                    </div>
+                </div>
+
+                <div class="footer-note">
+                    基于真实TikTok B2B/B2C账号数据模型估算
+                </div>
+            </div>
+        </div>
+
+        <!-- C端表单界面 -->
+        <div id="cEndForm" class="form-container">
+            <div class="container">
+                <button class="back-btn" data-back="mode">← 切换卖家类型</button>
+
+                <div class="form-card">
+                    <div class="form-header">
+                        <div class="form-icon">🛍️</div>
+                        <h2>卖家收益测算</h2>
+                        <p>适用于直接卖货的品牌/卖家</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>公司名称</label>
+                        <input type="text" id="cCompanyName" placeholder="例如：ABC Trading Co., Ltd.">
+                    </div>
+
+                    <div class="form-group">
+                        <label>产品客单价（美元）</label>
+                        <input type="number" id="cPrice" placeholder="例如：29.99" step="0.01" min="0.01">
+                    </div>
+
+                    <div class="form-group">
+                        <label>预估月销量（件）</label>
+                        <input type="number" id="cMonthlySales" placeholder="例如：500" step="1" min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label>产品品类</label>
+                        <select id="cCategory">
+                            <option value="">请选择</option>
+                            <option value="beauty">美妆护肤</option>
+                            <option value="clothing">服饰箱包</option>
+                            <option value="home">家居生活</option>
+                            <option value="electronics">3C数码</option>
+                            <option value="other">其他</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group conditional-field" id="cOtherCategoryGroup" style="display: none;">
+                        <label>其他产品类型</label>
+                        <input type="text" id="cOtherCategory" placeholder="例如：宠物用品、运动户外">
+                    </div>
+
+                    <button class="calculate-btn" id="cCalculateBtn">测算收益</button>
+
+                    <div id="cResult" class="result-card" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- B端表单界面 -->
+        <div id="bEndForm" class="form-container">
+            <div class="container">
+                <button class="back-btn" data-back="mode">← 切换卖家类型</button>
+
+                <div class="form-card">
+                    <div class="form-header">
+                        <div class="form-icon">🏭</div>
+                        <h2>工厂/项目方收益测算</h2>
+                        <p>适用于B端项目型业务（设备、工程、软硬件）</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>公司名称</label>
+                        <input type="text" id="bCompanyName" placeholder="例如：XYZ Technology Co., Ltd.">
+                    </div>
+
+                    <div class="form-group">
+                        <label>产品类型</label>
+                        <select id="bProductType">
+                            <option value="">请选择</option>
+                            <option value="parking_gate">停车场道闸</option>
+                            <option value="guidance_system">车位引导系统</option>
+                            <option value="lpr_camera">车牌识别摄像头</option>
+                            <option value="ev_charger">充电桩配套</option>
+                            <option value="other">其他软硬件</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group conditional-field" id="bOtherProductTypeGroup" style="display: none;">
+                        <label>其他产品类型</label>
+                        <input type="text" id="bOtherProductType" placeholder="例如：门禁系统、智能照明">
+                    </div>
+
+                    <div class="form-group">
+                        <label>单个项目金额范围</label>
+                        <select id="bPriceRange">
+                            <option value="">请选择</option>
+                            <option value="5k-10k">$5,000 - $10,000</option>
+                            <option value="10k-30k">$10,000 - $30,000</option>
+                            <option value="30k-50k">$30,000 - $50,000</option>
+                            <option value="50k+">$50,000 以上</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>是否有产品视频素材？</label>
+                        <div class="toggle-buttons">
+                            <button class="toggle-btn" data-video="true">有 ✅</button>
+                            <button class="toggle-btn active" data-video="false">无 📹</button>
+                        </div>
+                        <input type="hidden" id="bHasVideo" value="false">
+                    </div>
+
+                    <button class="calculate-btn" id="bCalculateBtn">测算收益</button>
+
+                    <div id="bResult" class="result-card" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

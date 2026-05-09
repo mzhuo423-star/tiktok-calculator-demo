@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.vercel/
+.railway/
+.env
+.env.*
+!.env.example
+
+.idea/
+
+.idea/
