@@ -15,20 +15,20 @@ const marginMap = {
 };
 
 const bProductMap = {
-    parking_gate: { label: '停车场道闸', inquiryRate: 2.5, winRate: 0.20 },
-    guidance_system: { label: '车位引导系统', inquiryRate: 1.8, winRate: 0.18 },
-    lpr_camera: { label: '车牌识别摄像头', inquiryRate: 3.0, winRate: 0.25 },
-    ev_charger: { label: '充电桩配套', inquiryRate: 2.0, winRate: 0.15 },
-    packaging: { label: '包装材料', inquiryRate: 3.2, winRate: 0.22 },
-    cable: { label: '线缆', inquiryRate: 2.6, winRate: 0.20 },
-    transformer: { label: '互感器', inquiryRate: 1.5, winRate: 0.16 },
-    sensor: { label: '传感器', inquiryRate: 2.2, winRate: 0.18 },
-    industrial_parts: { label: '工业零部件', inquiryRate: 2.0, winRate: 0.17 },
-    machinery: { label: '机械设备', inquiryRate: 1.4, winRate: 0.14 },
-    solar_storage: { label: '光伏储能配套', inquiryRate: 1.7, winRate: 0.15 },
-    security: { label: '安防设备', inquiryRate: 2.4, winRate: 0.19 },
-    led_lighting: { label: 'LED 照明', inquiryRate: 2.8, winRate: 0.21 },
-    other: { label: '其他软硬件', inquiryRate: 2.0, winRate: 0.18 }
+    parking_gate: { label: '停车场道闸', defaultModel: 'project', inquiryRate: 2.5, winRate: 0.20, orderRate: 0.16, grossMargin: 0.15 },
+    guidance_system: { label: '车位引导系统', defaultModel: 'project', inquiryRate: 1.8, winRate: 0.18, orderRate: 0.14, grossMargin: 0.15 },
+    lpr_camera: { label: '车牌识别摄像头', defaultModel: 'batch', inquiryRate: 3.0, winRate: 0.25, orderRate: 0.22, grossMargin: 0.18 },
+    ev_charger: { label: '充电桩配套', defaultModel: 'project', inquiryRate: 2.0, winRate: 0.15, orderRate: 0.12, grossMargin: 0.15 },
+    packaging: { label: '包装材料', defaultModel: 'batch', inquiryRate: 3.2, winRate: 0.22, orderRate: 0.28, grossMargin: 0.16 },
+    cable: { label: '线缆', defaultModel: 'batch', inquiryRate: 2.6, winRate: 0.20, orderRate: 0.24, grossMargin: 0.14 },
+    transformer: { label: '互感器', defaultModel: 'batch', inquiryRate: 1.5, winRate: 0.16, orderRate: 0.18, grossMargin: 0.18 },
+    sensor: { label: '传感器', defaultModel: 'batch', inquiryRate: 2.2, winRate: 0.18, orderRate: 0.22, grossMargin: 0.20 },
+    industrial_parts: { label: '工业零部件', defaultModel: 'batch', inquiryRate: 2.0, winRate: 0.17, orderRate: 0.20, grossMargin: 0.17 },
+    machinery: { label: '机械设备', defaultModel: 'project', inquiryRate: 1.4, winRate: 0.14, orderRate: 0.10, grossMargin: 0.16 },
+    solar_storage: { label: '光伏储能配套', defaultModel: 'project', inquiryRate: 1.7, winRate: 0.15, orderRate: 0.12, grossMargin: 0.15 },
+    security: { label: '安防设备', defaultModel: 'batch', inquiryRate: 2.4, winRate: 0.19, orderRate: 0.21, grossMargin: 0.18 },
+    led_lighting: { label: 'LED 照明', defaultModel: 'batch', inquiryRate: 2.8, winRate: 0.21, orderRate: 0.24, grossMargin: 0.17 },
+    other: { label: '其他软硬件', defaultModel: 'batch', inquiryRate: 2.0, winRate: 0.18, orderRate: 0.18, grossMargin: 0.16 }
 };
 
 const priceRangeMap = {
@@ -114,23 +114,32 @@ function calculateCEndRevenue(price, monthlySales, category) {
     };
 }
 
-function calculateBEndRevenue(productType, priceRange, hasVideo) {
+function resolveBDealModel(productType, selectedModel) {
+    if (selectedModel !== 'auto') return selectedModel;
+    return bProductMap[productType].defaultModel;
+}
+
+function calculateBEndRevenue(productType, priceRange, hasVideo, selectedModel) {
     const config = bProductMap[productType];
     const avgProjectValue = priceRangeMap[priceRange];
     const estimatedViews = 5000 + (hasVideo ? 3000 : 0);
     const estimatedInquiries = (estimatedViews / 10000) * config.inquiryRate;
-    const estimatedDeals = estimatedInquiries * config.winRate;
+    const dealModel = resolveBDealModel(productType, selectedModel);
+    const conversionRate = dealModel === 'project' ? config.winRate : config.orderRate;
+    const estimatedDeals = estimatedInquiries * conversionRate;
     const estimatedRevenue = estimatedDeals * avgProjectValue;
 
     return {
         productLabel: config.label,
+        dealModel,
         estimatedViews: Math.round(estimatedViews),
         estimatedInquiries: estimatedInquiries.toFixed(1),
         estimatedDeals: estimatedDeals.toFixed(1),
         estimatedRevenue: Math.round(estimatedRevenue),
-        estimatedProfit: Math.round(estimatedRevenue * 0.15),
+        estimatedProfit: Math.round(estimatedRevenue * config.grossMargin),
         avgProjectValue: Math.round(avgProjectValue),
-        winRate: Math.round(config.winRate * 100)
+        conversionRate: Math.round(conversionRate * 100),
+        grossMargin: Math.round(config.grossMargin * 100)
     };
 }
 
@@ -187,6 +196,7 @@ function calculateBEnd() {
     const companyName = getValue('bCompanyName');
     const productType = document.getElementById('bProductType').value;
     const priceRange = document.getElementById('bPriceRange').value;
+    const selectedDealModel = document.getElementById('bDealModel').value;
     const hasVideo = document.getElementById('bHasVideo').value === 'true';
     const otherProductType = getValue('bOtherProductType');
 
@@ -194,35 +204,41 @@ function calculateBEnd() {
     if (!productType || !priceRange) return showError('请选择产品类型和项目金额范围');
     if (productType === 'other' && !otherProductType) return showError('请输入其他产品类型');
 
-    const data = calculateBEndRevenue(productType, priceRange, hasVideo);
+    const data = calculateBEndRevenue(productType, priceRange, hasVideo, selectedDealModel);
     const lead = {
         mode: 'b',
         companyName,
         productType,
         productTypeText: productType === 'other' ? otherProductType : data.productLabel,
+        dealModel: data.dealModel,
         priceRange,
         hasVideo,
         result: data
     };
     saveLeadSnapshot(lead);
 
+    const modelLabel = data.dealModel === 'project' ? '项目单' : '小批量订单';
+    const dealCountLabel = data.dealModel === 'project' ? '预估月成交项目数' : '预估月小批量订单数';
+    const revenueLabel = data.dealModel === 'project' ? '期望月项目成交额' : '期望月订单成交额';
+
     renderResult(document.getElementById('bResult'), [
+        { label: '当前估算模型', value: modelLabel },
         { label: '预估月播放量', value: data.estimatedViews.toLocaleString() },
         { label: '预估月询盘数', value: `${data.estimatedInquiries} 个` },
-        { label: `预估月成交项目数（成交率 ${data.winRate}%）`, value: `${data.estimatedDeals} 个`, highlight: true },
-        { label: '期望月成交额', value: formatMoney(data.estimatedRevenue), large: true },
-        { label: '期望月利润（按 15% 毛利）', value: formatMoney(data.estimatedProfit) }
+        { label: `${dealCountLabel}（转化率 ${data.conversionRate}%）`, value: `${data.estimatedDeals} 个`, highlight: true },
+        { label: revenueLabel, value: formatMoney(data.estimatedRevenue), large: true },
+        { label: `期望月利润（按 ${data.grossMargin}% 毛利）`, value: formatMoney(data.estimatedProfit) }
     ], 'b');
 }
 
 function guideItems(mode) {
     if (mode === 'b') {
         return [
-            '不要只看播放量，B 端更要跟踪询盘质量、采购角色和项目周期。',
-            '视频素材要展示真实安装、使用场景和交付能力，避免只放产品特写。',
-            '海外项目报价要提前算进物流、安装、售后、备件和认证成本。',
+            '不要只看播放量，B 端要区分项目询盘、样品单、小批量订单和经销采购。',
+            '包装材料、线缆、传感器等品类要把 MOQ、打样费、运费和复购周期提前讲清楚。',
+            '项目型产品要展示真实安装、使用场景和交付能力，避免只放产品特写。',
             '高客单项目不要急着成交，先用案例、参数表、认证资料建立信任。',
-            '询盘表单尽量收集国家、预算、采购时间和项目规模，方便销售分层跟进。'
+            '询盘表单尽量收集国家、采购数量、预算、采购时间和应用场景，方便销售分层跟进。'
         ];
     }
 
@@ -274,6 +290,14 @@ document.getElementById('cCategory').addEventListener('change', () => {
 
 document.getElementById('bProductType').addEventListener('change', () => {
     toggleConditionalField('bProductType', 'bOtherProductTypeGroup');
+});
+
+document.querySelectorAll('.segment-btn[data-b-model]').forEach(button => {
+    button.addEventListener('click', () => {
+        document.getElementById('bDealModel').value = button.dataset.bModel;
+        document.querySelectorAll('.segment-btn[data-b-model]').forEach(item => item.classList.remove('active'));
+        button.classList.add('active');
+    });
 });
 
 document.querySelectorAll('.toggle-btn[data-video]').forEach(button => {
