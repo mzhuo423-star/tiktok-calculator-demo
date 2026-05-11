@@ -31,11 +31,21 @@ const bProductMap = {
     other: { label: '其他软硬件', defaultModel: 'batch', inquiryRate: 2.0, winRate: 0.18, orderRate: 0.18, grossMargin: 0.16 }
 };
 
-const priceRangeMap = {
-    '5k-10k': 7500,
-    '10k-30k': 20000,
-    '30k-50k': 40000,
-    '50k+': 75000
+const priceRangeOptions = {
+    project: [
+        { value: '', label: '请选择', amount: 0 },
+        { value: '10k-30k', label: '$10,000 - $30,000', amount: 20000 },
+        { value: '30k-50k', label: '$30,000 - $50,000', amount: 40000 },
+        { value: '50k-100k', label: '$50,000 - $100,000', amount: 75000 },
+        { value: '100k+', label: '$100,000 以上', amount: 150000 }
+    ],
+    batch: [
+        { value: '', label: '请选择', amount: 0 },
+        { value: '500-1k', label: '$500 - $1,000', amount: 750 },
+        { value: '1k-3k', label: '$1,000 - $3,000', amount: 2000 },
+        { value: '3k-5k', label: '$3,000 - $5,000', amount: 4000 },
+        { value: '5k-10k', label: '$5,000 - $10,000', amount: 7500 }
+    ]
 };
 
 let currentLead = null;
@@ -114,24 +124,22 @@ function calculateCEndRevenue(price, monthlySales, category) {
     };
 }
 
-function resolveBDealModel(productType, selectedModel) {
-    if (selectedModel !== 'auto') return selectedModel;
-    return bProductMap[productType].defaultModel;
+function getPriceRangeAmount(model, value) {
+    return priceRangeOptions[model].find(option => option.value === value)?.amount || 0;
 }
 
 function calculateBEndRevenue(productType, priceRange, hasVideo, selectedModel) {
     const config = bProductMap[productType];
-    const avgProjectValue = priceRangeMap[priceRange];
+    const avgProjectValue = getPriceRangeAmount(selectedModel, priceRange);
     const estimatedViews = 5000 + (hasVideo ? 3000 : 0);
     const estimatedInquiries = (estimatedViews / 10000) * config.inquiryRate;
-    const dealModel = resolveBDealModel(productType, selectedModel);
-    const conversionRate = dealModel === 'project' ? config.winRate : config.orderRate;
+    const conversionRate = selectedModel === 'project' ? config.winRate : config.orderRate;
     const estimatedDeals = estimatedInquiries * conversionRate;
     const estimatedRevenue = estimatedDeals * avgProjectValue;
 
     return {
         productLabel: config.label,
-        dealModel,
+        dealModel: selectedModel,
         estimatedViews: Math.round(estimatedViews),
         estimatedInquiries: estimatedInquiries.toFixed(1),
         estimatedDeals: estimatedDeals.toFixed(1),
@@ -155,6 +163,13 @@ function renderResult(container, rows, mode) {
         <button class="cta-btn" type="button" data-guide="${mode}">查看避坑指南</button>
         <div class="note-text">* 以上为前端模型估算，适合做方案初筛；真实结果会受内容质量、投放节奏和供应链履约影响。</div>
     `;
+}
+
+function renderBPriceRangeOptions(model) {
+    const priceRangeSelect = document.getElementById('bPriceRange');
+    priceRangeSelect.innerHTML = priceRangeOptions[model]
+        .map(option => `<option value="${option.value}">${option.label}</option>`)
+        .join('');
 }
 
 function calculateCEnd() {
@@ -217,8 +232,8 @@ function calculateBEnd() {
     };
     saveLeadSnapshot(lead);
 
-    const modelLabel = data.dealModel === 'project' ? '项目单' : '小批量订单';
-    const dealCountLabel = data.dealModel === 'project' ? '预估月成交项目数' : '预估月小批量订单数';
+    const modelLabel = data.dealModel === 'project' ? '项目单' : '批量订单';
+    const dealCountLabel = data.dealModel === 'project' ? '预估月成交项目数' : '预估月批量订单数';
     const revenueLabel = data.dealModel === 'project' ? '期望月项目成交额' : '期望月订单成交额';
 
     renderResult(document.getElementById('bResult'), [
@@ -297,6 +312,7 @@ document.querySelectorAll('.segment-btn[data-b-model]').forEach(button => {
         document.getElementById('bDealModel').value = button.dataset.bModel;
         document.querySelectorAll('.segment-btn[data-b-model]').forEach(item => item.classList.remove('active'));
         button.classList.add('active');
+        renderBPriceRangeOptions(button.dataset.bModel);
     });
 });
 
@@ -333,3 +349,6 @@ document.addEventListener('keydown', event => {
         if (event.key === 'Enter') calculateBEnd();
     });
 });
+
+document.querySelector('[data-b-model="project"]').classList.add('active');
+renderBPriceRangeOptions('project');

@@ -303,6 +303,10 @@ body {
     background: #f8fafc;
 }
 
+.segmented-control.two-options {
+    grid-template-columns: repeat(2, 1fr);
+}
+
 .segment-btn {
     min-height: 38px;
     border: none;

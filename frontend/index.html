@@ -165,22 +165,16 @@
 
                     <div class="form-group">
                         <label>成交模式</label>
-                        <div class="segmented-control">
-                            <button class="segment-btn active" type="button" data-b-model="auto">自动判断</button>
+                        <div class="segmented-control two-options">
                             <button class="segment-btn" type="button" data-b-model="project">项目单</button>
-                            <button class="segment-btn" type="button" data-b-model="batch">小批量订单</button>
+                            <button class="segment-btn" type="button" data-b-model="batch">批量订单</button>
                         </div>
-                        <input type="hidden" id="bDealModel" value="auto">
+                        <input type="hidden" id="bDealModel" value="project">
                     </div>
 
                     <div class="form-group">
                         <label for="bPriceRange">单笔成交金额范围</label>
                         <select id="bPriceRange">
-                            <option value="">请选择</option>
-                            <option value="5k-10k">$5,000 - $10,000</option>
-                            <option value="10k-30k">$10,000 - $30,000</option>
-                            <option value="30k-50k">$30,000 - $50,000</option>
-                            <option value="50k+">$50,000 以上</option>
                         </select>
                     </div>
 
