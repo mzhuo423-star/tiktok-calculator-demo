@@ -10,27 +10,57 @@
 <body>
     <div id="app">
         <section id="modeSelector" class="mode-selector active">
-            <div class="container">
+            <div class="container home-container">
                 <div class="header">
+                    <div class="eyebrow">TikTok Growth Calculator</div>
                     <h1>TikTok 收益测算器</h1>
-                    <p>快速预估跨境业务的 TikTok 变现潜力</p>
+                    <p>用 30 秒快速估算跨境生意的内容获客、销售利润和项目转化空间。</p>
+                </div>
+
+                <div class="home-metrics" aria-label="测算覆盖指标">
+                    <div>
+                        <strong>2</strong>
+                        <span>业务模型</span>
+                    </div>
+                    <div>
+                        <strong>30s</strong>
+                        <span>完成测算</span>
+                    </div>
+                    <div>
+                        <strong>0</strong>
+                        <span>后端成本</span>
+                    </div>
                 </div>
 
                 <div class="mode-cards">
                     <button class="mode-card" type="button" data-mode="c">
-                        <span class="mode-icon">C</span>
-                        <span class="mode-title">品牌/卖家</span>
-                        <span class="mode-desc">适合直接卖货的消费品业务<br>美妆、服饰、家居、3C 等</span>
+                        <span class="mode-card-top">
+                            <span class="mode-icon">C</span>
+                            <span class="mode-tag">消费品卖货</span>
+                        </span>
+                        <span class="mode-title">品牌 / 卖家</span>
+                        <span class="mode-desc">适合直接卖货的跨境电商业务，预估销售额、毛利和播放收益。</span>
+                        <span class="mode-examples">美妆、服饰、家居、3C、宠物用品</span>
+                        <span class="mode-action">开始测算</span>
                     </button>
 
                     <button class="mode-card" type="button" data-mode="b">
-                        <span class="mode-icon">B</span>
-                        <span class="mode-title">工厂/项目方</span>
-                        <span class="mode-desc">适合接 B 端项目询盘<br>设备、工程、软硬件方案等</span>
+                        <span class="mode-card-top">
+                            <span class="mode-icon">B</span>
+                            <span class="mode-tag">B 端询盘</span>
+                        </span>
+                        <span class="mode-title">工厂 / 项目方</span>
+                        <span class="mode-desc">适合项目型业务，预估播放量、询盘数、成交概率和期望利润。</span>
+                        <span class="mode-examples">设备、工程、软硬件方案、充电桩</span>
+                        <span class="mode-action">开始测算</span>
                     </button>
                 </div>
 
-                <p class="footer-note">纯前端测算版本，可直接部署到腾讯云 CloudBase 静态网站托管</p>
+                <div class="home-note">
+                    <span>无需登录</span>
+                    <span>本地计算</span>
+                    <span>测算后可查看避坑指南</span>
+                </div>
             </div>
         </section>
 
