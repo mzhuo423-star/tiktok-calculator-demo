@@ -137,9 +137,8 @@ function calculateBEndRevenue(productType, priceRange, hasVideo, selectedModel) 
     const config = bProductMap[productType];
     const trafficConfig = bModelTraffic[selectedModel];
     const avgProjectValue = getPriceRangeAmount(selectedModel, priceRange);
-    const inquiryRate = selectedModel === 'project' ? config.projectInquiryRate : config.batchInquiryRate;
     const estimatedViews = trafficConfig.baseViews + (hasVideo ? trafficConfig.videoBonus : 0);
-    const estimatedInquiries = (estimatedViews / 10000) * inquiryRate;
+    const estimatedInquiries = hasVideo ? 56 : 32;
     const conversionRate = selectedModel === 'project' ? config.winRate : config.orderRate;
     const estimatedDeals = estimatedInquiries * conversionRate;
     const estimatedRevenue = estimatedDeals * avgProjectValue;
@@ -148,8 +147,7 @@ function calculateBEndRevenue(productType, priceRange, hasVideo, selectedModel) 
         productLabel: config.label,
         dealModel: selectedModel,
         estimatedViews: Math.round(estimatedViews),
-        inquiryRate,
-        estimatedInquiries: estimatedInquiries.toFixed(1),
+        estimatedInquiries: estimatedInquiries.toFixed(0),
         estimatedDeals: estimatedDeals.toFixed(1),
         estimatedRevenue: Math.round(estimatedRevenue),
         estimatedProfit: Math.round(estimatedRevenue * config.grossMargin),
