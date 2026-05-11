@@ -3,6 +3,14 @@ const marginMap = {
     clothing: { label: '服饰箱包', margin: 0.30 },
     home: { label: '家居生活', margin: 0.28 },
     electronics: { label: '3C 数码', margin: 0.20 },
+    pet: { label: '宠物用品', margin: 0.32 },
+    sports: { label: '运动户外', margin: 0.27 },
+    baby: { label: '母婴用品', margin: 0.26 },
+    food: { label: '食品饮料', margin: 0.24 },
+    jewelry: { label: '饰品配件', margin: 0.38 },
+    auto: { label: '汽车用品', margin: 0.25 },
+    tools: { label: '工具五金', margin: 0.22 },
+    stationery: { label: '文具办公', margin: 0.29 },
     other: { label: '其他', margin: 0.25 }
 };
 
@@ -11,6 +19,15 @@ const bProductMap = {
     guidance_system: { label: '车位引导系统', inquiryRate: 1.8, winRate: 0.18 },
     lpr_camera: { label: '车牌识别摄像头', inquiryRate: 3.0, winRate: 0.25 },
     ev_charger: { label: '充电桩配套', inquiryRate: 2.0, winRate: 0.15 },
+    packaging: { label: '包装材料', inquiryRate: 3.2, winRate: 0.22 },
+    cable: { label: '线缆', inquiryRate: 2.6, winRate: 0.20 },
+    transformer: { label: '互感器', inquiryRate: 1.5, winRate: 0.16 },
+    sensor: { label: '传感器', inquiryRate: 2.2, winRate: 0.18 },
+    industrial_parts: { label: '工业零部件', inquiryRate: 2.0, winRate: 0.17 },
+    machinery: { label: '机械设备', inquiryRate: 1.4, winRate: 0.14 },
+    solar_storage: { label: '光伏储能配套', inquiryRate: 1.7, winRate: 0.15 },
+    security: { label: '安防设备', inquiryRate: 2.4, winRate: 0.19 },
+    led_lighting: { label: 'LED 照明', inquiryRate: 2.8, winRate: 0.21 },
     other: { label: '其他软硬件', inquiryRate: 2.0, winRate: 0.18 }
 };
 
