@@ -138,7 +138,7 @@ function calculateBEndRevenue(productType, priceRange, hasVideo, selectedModel) 
     const trafficConfig = bModelTraffic[selectedModel];
     const avgProjectValue = getPriceRangeAmount(selectedModel, priceRange);
     const estimatedViews = trafficConfig.baseViews + (hasVideo ? trafficConfig.videoBonus : 0);
-    const estimatedInquiries = hasVideo ? 56 : 32;
+    const estimatedInquiries = hasVideo ? 57 : 26;
     const conversionRate = selectedModel === 'project' ? config.winRate : config.orderRate;
     const estimatedDeals = estimatedInquiries * conversionRate;
     const estimatedRevenue = estimatedDeals * avgProjectValue;
