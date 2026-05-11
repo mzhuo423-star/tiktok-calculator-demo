@@ -15,20 +15,25 @@ const marginMap = {
 };
 
 const bProductMap = {
-    parking_gate: { label: '停车场道闸', defaultModel: 'project', inquiryRate: 2.5, winRate: 0.20, orderRate: 0.16, grossMargin: 0.15 },
-    guidance_system: { label: '车位引导系统', defaultModel: 'project', inquiryRate: 1.8, winRate: 0.18, orderRate: 0.14, grossMargin: 0.15 },
-    lpr_camera: { label: '车牌识别摄像头', defaultModel: 'batch', inquiryRate: 3.0, winRate: 0.25, orderRate: 0.22, grossMargin: 0.18 },
-    ev_charger: { label: '充电桩配套', defaultModel: 'project', inquiryRate: 2.0, winRate: 0.15, orderRate: 0.12, grossMargin: 0.15 },
-    packaging: { label: '包装材料', defaultModel: 'batch', inquiryRate: 3.2, winRate: 0.22, orderRate: 0.28, grossMargin: 0.16 },
-    cable: { label: '线缆', defaultModel: 'batch', inquiryRate: 2.6, winRate: 0.20, orderRate: 0.24, grossMargin: 0.14 },
-    transformer: { label: '互感器', defaultModel: 'batch', inquiryRate: 1.5, winRate: 0.16, orderRate: 0.18, grossMargin: 0.18 },
-    sensor: { label: '传感器', defaultModel: 'batch', inquiryRate: 2.2, winRate: 0.18, orderRate: 0.22, grossMargin: 0.20 },
-    industrial_parts: { label: '工业零部件', defaultModel: 'batch', inquiryRate: 2.0, winRate: 0.17, orderRate: 0.20, grossMargin: 0.17 },
-    machinery: { label: '机械设备', defaultModel: 'project', inquiryRate: 1.4, winRate: 0.14, orderRate: 0.10, grossMargin: 0.16 },
-    solar_storage: { label: '光伏储能配套', defaultModel: 'project', inquiryRate: 1.7, winRate: 0.15, orderRate: 0.12, grossMargin: 0.15 },
-    security: { label: '安防设备', defaultModel: 'batch', inquiryRate: 2.4, winRate: 0.19, orderRate: 0.21, grossMargin: 0.18 },
-    led_lighting: { label: 'LED 照明', defaultModel: 'batch', inquiryRate: 2.8, winRate: 0.21, orderRate: 0.24, grossMargin: 0.17 },
-    other: { label: '其他软硬件', defaultModel: 'batch', inquiryRate: 2.0, winRate: 0.18, orderRate: 0.18, grossMargin: 0.16 }
+    parking_gate: { label: '停车场道闸', projectInquiryRate: 2.5, batchInquiryRate: 3.0, winRate: 0.20, orderRate: 0.16, grossMargin: 0.15 },
+    guidance_system: { label: '车位引导系统', projectInquiryRate: 1.8, batchInquiryRate: 2.2, winRate: 0.18, orderRate: 0.14, grossMargin: 0.15 },
+    lpr_camera: { label: '车牌识别摄像头', projectInquiryRate: 2.2, batchInquiryRate: 3.8, winRate: 0.25, orderRate: 0.22, grossMargin: 0.18 },
+    ev_charger: { label: '充电桩配套', projectInquiryRate: 2.0, batchInquiryRate: 2.4, winRate: 0.15, orderRate: 0.12, grossMargin: 0.15 },
+    packaging: { label: '包装材料', projectInquiryRate: 1.8, batchInquiryRate: 4.5, winRate: 0.22, orderRate: 0.28, grossMargin: 0.16 },
+    cable: { label: '线缆', projectInquiryRate: 1.6, batchInquiryRate: 3.6, winRate: 0.20, orderRate: 0.24, grossMargin: 0.14 },
+    transformer: { label: '互感器', projectInquiryRate: 1.5, batchInquiryRate: 2.4, winRate: 0.16, orderRate: 0.18, grossMargin: 0.18 },
+    sensor: { label: '传感器', projectInquiryRate: 1.7, batchInquiryRate: 3.2, winRate: 0.18, orderRate: 0.22, grossMargin: 0.20 },
+    industrial_parts: { label: '工业零部件', projectInquiryRate: 1.6, batchInquiryRate: 2.9, winRate: 0.17, orderRate: 0.20, grossMargin: 0.17 },
+    machinery: { label: '机械设备', projectInquiryRate: 1.4, batchInquiryRate: 1.8, winRate: 0.14, orderRate: 0.10, grossMargin: 0.16 },
+    solar_storage: { label: '光伏储能配套', projectInquiryRate: 1.7, batchInquiryRate: 2.1, winRate: 0.15, orderRate: 0.12, grossMargin: 0.15 },
+    security: { label: '安防设备', projectInquiryRate: 1.9, batchInquiryRate: 3.3, winRate: 0.19, orderRate: 0.21, grossMargin: 0.18 },
+    led_lighting: { label: 'LED 照明', projectInquiryRate: 2.0, batchInquiryRate: 4.0, winRate: 0.21, orderRate: 0.24, grossMargin: 0.17 },
+    other: { label: '其他软硬件', projectInquiryRate: 1.8, batchInquiryRate: 3.0, winRate: 0.18, orderRate: 0.18, grossMargin: 0.16 }
+};
+
+const bModelTraffic = {
+    project: { baseViews: 5000, videoBonus: 3000 },
+    batch: { baseViews: 9000, videoBonus: 4500 }
 };
 
 const priceRangeOptions = {
@@ -130,9 +135,11 @@ function getPriceRangeAmount(model, value) {
 
 function calculateBEndRevenue(productType, priceRange, hasVideo, selectedModel) {
     const config = bProductMap[productType];
+    const trafficConfig = bModelTraffic[selectedModel];
     const avgProjectValue = getPriceRangeAmount(selectedModel, priceRange);
-    const estimatedViews = 5000 + (hasVideo ? 3000 : 0);
-    const estimatedInquiries = (estimatedViews / 10000) * config.inquiryRate;
+    const inquiryRate = selectedModel === 'project' ? config.projectInquiryRate : config.batchInquiryRate;
+    const estimatedViews = trafficConfig.baseViews + (hasVideo ? trafficConfig.videoBonus : 0);
+    const estimatedInquiries = (estimatedViews / 10000) * inquiryRate;
     const conversionRate = selectedModel === 'project' ? config.winRate : config.orderRate;
     const estimatedDeals = estimatedInquiries * conversionRate;
     const estimatedRevenue = estimatedDeals * avgProjectValue;
@@ -141,6 +148,7 @@ function calculateBEndRevenue(productType, priceRange, hasVideo, selectedModel) 
         productLabel: config.label,
         dealModel: selectedModel,
         estimatedViews: Math.round(estimatedViews),
+        inquiryRate,
         estimatedInquiries: estimatedInquiries.toFixed(1),
         estimatedDeals: estimatedDeals.toFixed(1),
         estimatedRevenue: Math.round(estimatedRevenue),
